@@ -1,23 +1,10 @@
 from tkinter import *
 from tkinter import messagebox
+import random
+import pyperclip
 
 YELLOW = "#D9DD6B"
 CITRUS = "#ECEFA4"
-RED = "#D54C4C"
-MAROON = "#8D2828"
-
-with open("config.txt", "r") as settings:
-    data_settings = settings.read()
-
-
-def gen_password():
-    pass
-
-
-def add_password():
-    save(web_name_entry.get(), email_username_entry.get(), password_entry.get())
-    pass
-
 
 # ----------------------------- CONFIG WINDOW --------------------------------------------#
 
@@ -50,28 +37,51 @@ def open_config_window():
 
 # ----------------------------- PASSWORD GENERATOR -------------------------------#
 
+def generate_password():
+
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+               'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+               'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
+
+    password_list = [(random.choice(letters)) for _ in range(random.randint(8, 10))]
+    password_list += [(random.choice(symbols)) for _ in range(random.randint(2, 4))]
+    password_list += [(random.choice(numbers)) for _ in range(random.randint(2, 4))]
+
+    random.shuffle(password_list)
+
+    password = "".join(password_list)
+
+    print(f"Your password is: {password}")
+    password_entry.delete("0", "end")
+    password_entry.insert(0, password)
+    pyperclip.copy(password)
+
 
 # ----------------------------- SAVE PASSWORD -------------------------------#
 
 
-def save(web, user_mail, password):
+def save():
 
-    data_string = f"{web} | {user_mail} | {password}\n"
+    web = web_name_entry.get()
+    user_mail = email_username_entry.get()
+    password = password_entry.get()
 
     if web_name_entry.get() != "" and password_entry.get() != "" and email_username_entry.get() != "":
 
-        is_ok = messagebox.askokcancel(title=web, message=f"These are the details entered: \n"
-                                                          f"Email: {user_mail}\nPassword: {password} \nIs it ok to save?")
+        is_ok = messagebox.askokcancel(title=web,
+                                       message=f"These are the details entered: \n"
+                                               f"Email: {user_mail}\nPassword: {password} \nIs it ok to save?")
 
         if is_ok:
             with open("Your_passwords.txt", "a") as data:
-                data.write(data_string)
+                data.write(f"{web} | {user_mail} | {password}\n")
             web_name_entry.delete(0, END)
             password_entry.delete(0, END)
             messagebox.showinfo(title="Info", message="Done")
     else:
-        messagebox.showerror(message="Empty website, email or password")
-
+        messagebox.showerror(title="Error", message="Empty website, email or password")
 
 
 # ----------------------------- UI SETUP -------------------------------#
@@ -103,7 +113,6 @@ email_username_entry.grid(row=2, column=1, columnspan=2, sticky="W")
 
 
 def setting_default():
-
     with open("config.txt", "r") as config_file:
         default_data = config_file.read()
     email_username_entry.delete("0", "end")
@@ -118,10 +127,9 @@ password_entry.grid(row=3, column=1, sticky="W")
 # buttons
 
 generate_password_button = Button(width=16, text="Generate Password",
-                                  font=("Arial", 8, "normal"), command=gen_password)
-generate_password_button.grid(row=3, column=2,  sticky="E")
-add_button = Button(width=39, text="Add", font=("Arial", 8, "normal"),
-                    command=add_password)
+                                  font=("Arial", 8, "normal"), command=generate_password)
+generate_password_button.grid(row=3, column=2, sticky="E")
+add_button = Button(width=39, text="Add", font=("Arial", 8, "normal"), command=save)
 add_button.grid(row=4, column=1, columnspan=2, sticky="W")
 gear_photo = PhotoImage(file="gear.png")
 config_button = Button(image=gear_photo, command=open_config_window)

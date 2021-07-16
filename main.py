@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 
 YELLOW = "#D9DD6B"
 CITRUS = "#ECEFA4"
@@ -55,9 +56,22 @@ def open_config_window():
 
 def save(web, user_mail, password):
 
-    data_string = f"{web} | {user_mail} | {password} \n"
-    with open("Your_passwords.txt", "a") as data:
-        data.write(data_string)
+    data_string = f"{web} | {user_mail} | {password}\n"
+
+    if web_name_entry.get() != "" and password_entry.get() != "" and email_username_entry.get() != "":
+
+        is_ok = messagebox.askokcancel(title=web, message=f"These are the details entered: \n"
+                                                          f"Email: {user_mail}\nPassword: {password} \nIs it ok to save?")
+
+        if is_ok:
+            with open("Your_passwords.txt", "a") as data:
+                data.write(data_string)
+            web_name_entry.delete(0, END)
+            password_entry.delete(0, END)
+            messagebox.showinfo(title="Info", message="Done")
+    else:
+        messagebox.showerror(message="Empty website, email or password")
+
 
 
 # ----------------------------- UI SETUP -------------------------------#

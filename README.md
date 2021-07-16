@@ -1,5 +1,8 @@
-# Password Manager
+# Password Saver
 
 ##Tkinter project
 
-Project allows saving in a txt file your login/mail and password and generate a random password
+Project allows:\
+-saving in a txt file web name, your username/mail and password.\
+-generating a random password\
+-saving default Username/Email\

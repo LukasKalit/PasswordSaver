@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 YELLOW = "#D9DD6B"
 CITRUS = "#ECEFA4"
@@ -67,22 +68,36 @@ def save():
     web = web_name_entry.get()
     user_mail = email_username_entry.get()
     password = password_entry.get()
+    new_data = {
+        web: {
+            "email": user_mail,
+            "password": password
+        }
+    }
 
-    if web_name_entry.get() != "" and password_entry.get() != "" and email_username_entry.get() != "":
+    if web == "" or password == "" or user_mail == "":
+        messagebox.showinfo(title="Oops", message="Please make sure you haven't left any fields empty.")
+    else:
+        try:
+            with open("data.json", "r") as data:
+                # Reading old data
+                data_file = json.load(data)
 
-        is_ok = messagebox.askokcancel(title=web,
-                                       message=f"These are the details entered: \n"
-                                               f"Email: {user_mail}\nPassword: {password} \nIs it ok to save?")
+        except FileNotFoundError:
+            with open("data.json", "w") as data:
+                json.dump(new_data, data, indent=4)
 
-        if is_ok:
-            with open("Your_passwords.txt", "a") as data:
-                data.write(f"{web} | {user_mail} | {password}\n")
+        else:
+            # Updating old data with new data
+            data_file.update(new_data)
+            with open("data.json", "w") as data:
+                # Saving updated data
+                json.dump(data_file, data, indent=4)
+
+        finally:
             web_name_entry.delete(0, END)
             password_entry.delete(0, END)
             messagebox.showinfo(title="Info", message="Done")
-    else:
-        messagebox.showerror(title="Error", message="Empty website, email or password")
-
 
 # ----------------------------- UI SETUP -------------------------------#
 

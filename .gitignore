@@ -4,4 +4,4 @@ __pycache__/
 *$py.class
 
 # Data
-Your_passwords.txt
+data.json

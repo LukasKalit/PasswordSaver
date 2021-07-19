@@ -98,6 +98,26 @@ def save():
             web_name_entry.delete(0, END)
             password_entry.delete(0, END)
             messagebox.showinfo(title="Info", message="Done")
+# ------------------------------ SEARCH ---------------------------------#
+
+
+def search_website():
+    try:
+        with open("data.json", "r") as data_file:
+            data = json.load(data_file)
+            print(data[web_name_entry.get()])
+            email_data = data[web_name_entry.get()]["email"]
+            password_data = data[web_name_entry.get()]["password"]
+        messagebox.showinfo(title=web_name_entry.get(),
+                            message=f"Email/User_name: {email_data}\nPassword: {password_data}")
+
+    except KeyError:
+        messagebox.showinfo(title="Error",
+                            message="No Website found")
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error",
+                            message="No Data File Found!\nCreate data file first")
+
 
 # ----------------------------- UI SETUP -------------------------------#
 
@@ -120,7 +140,7 @@ password_label = Label(text="Password:", font=("Arial", 10, "normal"), bg=CITRUS
 password_label.grid(row=3, column=0, sticky="E")
 
 # entries
-web_name_entry = Entry(width=40)
+web_name_entry = Entry(width=22)
 web_name_entry.grid(row=1, column=1, columnspan=2, sticky="W")
 web_name_entry.focus()
 email_username_entry = Entry(width=40)
@@ -149,5 +169,8 @@ add_button.grid(row=4, column=1, columnspan=2, sticky="W")
 gear_photo = PhotoImage(file="gear.png")
 config_button = Button(image=gear_photo, command=open_config_window)
 config_button.grid(row=0, column=2, sticky="NE")
+search_button = Button(width=16, text="Search",
+                       font=("Arial", 8, "normal"), command=search_website)
+search_button.grid(row=1, column=2, sticky="E")
 
 mainloop()

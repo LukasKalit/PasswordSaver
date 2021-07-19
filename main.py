@@ -51,10 +51,7 @@ def generate_password():
     password_list += [(random.choice(numbers)) for _ in range(random.randint(2, 4))]
 
     random.shuffle(password_list)
-
     password = "".join(password_list)
-
-    print(f"Your password is: {password}")
     password_entry.delete("0", "end")
     password_entry.insert(0, password)
     pyperclip.copy(password)
@@ -98,29 +95,31 @@ def save():
             web_name_entry.delete(0, END)
             password_entry.delete(0, END)
             messagebox.showinfo(title="Info", message="Done")
-# ------------------------------ SEARCH ---------------------------------#
+# ------------------------------ FIND PASSWORD ---------------------------------#
 
 
 def search_website():
     try:
         with open("data.json", "r") as data_file:
             data = json.load(data_file)
-            print(data[web_name_entry.get()])
-            email_data = data[web_name_entry.get()]["email"]
-            password_data = data[web_name_entry.get()]["password"]
-        messagebox.showinfo(title=web_name_entry.get(),
-                            message=f"Email/User_name: {email_data}\nPassword: {password_data}")
 
-    except KeyError:
-        messagebox.showinfo(title="Error",
-                            message="No Website found")
     except FileNotFoundError:
         messagebox.showinfo(title="Error",
                             message="No Data File Found!\nCreate data file first")
 
+    else:
+        if web_name_entry.get() in data:
+            email_data = data[web_name_entry.get()]["email"]
+            password_data = data[web_name_entry.get()]["password"]
+            messagebox.showinfo(title=web_name_entry.get(),
+                                message=f"Email/User_name: {email_data}\nPassword: {password_data}")
+            pyperclip.copy(password_data)
+        else:
+            messagebox.showinfo(title="Error",
+                                message="No information about this website")
+
 
 # ----------------------------- UI SETUP -------------------------------#
-
 
 root = Tk()
 root.title("Password Manager")
@@ -160,7 +159,6 @@ password_entry = Entry(width=22)
 password_entry.grid(row=3, column=1, sticky="W")
 
 # buttons
-
 generate_password_button = Button(width=16, text="Generate Password",
                                   font=("Arial", 8, "normal"), command=generate_password)
 generate_password_button.grid(row=3, column=2, sticky="E")
